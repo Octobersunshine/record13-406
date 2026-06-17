@@ -71,6 +71,24 @@ class TrigCalculator:
         result = math.atan(value)
         return TrigCalculator._from_radians(result, unit)
 
+    @staticmethod
+    def sinh(value, unit='radian'):
+        TrigCalculator._validate_finite(value, 'input')
+        rad = TrigCalculator._to_radians(value, unit)
+        return math.sinh(rad)
+
+    @staticmethod
+    def cosh(value, unit='radian'):
+        TrigCalculator._validate_finite(value, 'input')
+        rad = TrigCalculator._to_radians(value, unit)
+        return math.cosh(rad)
+
+    @staticmethod
+    def tanh(value, unit='radian'):
+        TrigCalculator._validate_finite(value, 'input')
+        rad = TrigCalculator._to_radians(value, unit)
+        return math.tanh(rad)
+
 
 class TrigHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -78,7 +96,8 @@ class TrigHTTPRequestHandler(BaseHTTPRequestHandler):
         params = parse_qs(parsed.query)
 
         func = parsed.path.lstrip('/').lower()
-        supported_funcs = ['sin', 'cos', 'tan', 'asin', 'acos', 'atan']
+        supported_funcs = ['sin', 'cos', 'tan', 'asin', 'acos', 'atan',
+                           'sinh', 'cosh', 'tanh']
 
         if func not in supported_funcs:
             self._send_error(400, f'Unsupported function: {func}. Supported: {supported_funcs}')
@@ -137,7 +156,7 @@ class TrigHTTPRequestHandler(BaseHTTPRequestHandler):
 def run_http_server(host='0.0.0.0', port=8080):
     server = HTTPServer((host, port), TrigHTTPRequestHandler)
     print(f'Trigonometry HTTP Service running at http://{host}:{port}')
-    print('Supported endpoints: /sin, /cos, /tan, /asin, /acos, /atan')
+    print('Supported endpoints: /sin, /cos, /tan, /asin, /acos, /atan, /sinh, /cosh, /tanh')
     print('Query params: value (number), unit (radian|degree, default: radian)')
     print('Example: http://localhost:8080/sin?value=90&unit=degree')
     try:
@@ -148,16 +167,17 @@ def run_http_server(host='0.0.0.0', port=8080):
 
 def run_cli():
     print('Trigonometry Calculator (CLI Mode)')
-    print('Supported functions: sin, cos, tan, asin, acos, atan')
+    print('Supported functions: sin, cos, tan, asin, acos, atan, sinh, cosh, tanh')
     print('Type "quit" or "exit" to stop\n')
 
     while True:
         try:
-            func = input('Enter function (sin/cos/tan/asin/acos/atan): ').strip().lower()
+            func = input('Enter function (sin/cos/tan/asin/acos/atan/sinh/cosh/tanh): ').strip().lower()
             if func in ('quit', 'exit'):
                 print('Goodbye!')
                 break
-            if func not in ('sin', 'cos', 'tan', 'asin', 'acos', 'atan'):
+            if func not in ('sin', 'cos', 'tan', 'asin', 'acos', 'atan',
+                            'sinh', 'cosh', 'tanh'):
                 print('Invalid function. Try again.\n')
                 continue
 

@@ -22,6 +22,16 @@ def main():
         ('/invalid_func?value=1', 400, 'Unsupported'),
         ('/tan?value=inf&unit=degree', 400, 'infinity'),
         ('/acos?value=nan', 400, 'NaN'),
+        # Hyperbolic function tests
+        ('/sinh?value=0', 200, None),
+        ('/cosh?value=0', 200, None),
+        ('/tanh?value=0', 200, None),
+        ('/sinh?value=1', 200, None),
+        ('/cosh?value=1', 200, None),
+        ('/tanh?value=1', 200, None),
+        ('/sinh?value=180&unit=degree', 200, None),
+        ('/cosh?value=inf', 400, 'infinity'),
+        ('/tanh?value=nan', 400, 'NaN'),
     ]
 
     print('=== HTTP API Error Handling Tests ===')

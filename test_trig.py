@@ -129,6 +129,74 @@ def test_invalid_inputs():
     except ValueError as e:
         print(f"sin('hello') raises ValueError: {e}")
     
+    # Test hyperbolic inf/nan
+    try:
+        TrigCalculator.sinh(float('inf'))
+        assert False, "sinh(inf) should raise ValueError"
+    except ValueError as e:
+        print(f"sinh(inf) raises ValueError: {e}")
+    
+    try:
+        TrigCalculator.cosh(float('nan'))
+        assert False, "cosh(nan) should raise ValueError"
+    except ValueError as e:
+        print(f"cosh(nan) raises ValueError: {e}")
+    
+    print()
+
+
+def test_hyperbolic():
+    print("=== Testing Hyperbolic Functions ===")
+    
+    pi = math.pi
+    
+    # sinh(0) = 0
+    sinh_0 = TrigCalculator.sinh(0, 'radian')
+    print(f"sinh(0) = {sinh_0} (expected ~0.0)")
+    assert abs(sinh_0 - 0.0) < 1e-10, "sinh(0) test failed"
+    
+    # sinh(1) using math.sinh directly for comparison
+    sinh_1 = TrigCalculator.sinh(1.0, 'radian')
+    expected_sinh_1 = math.sinh(1.0)
+    print(f"sinh(1) = {sinh_1} (expected ~{expected_sinh_1})")
+    assert abs(sinh_1 - expected_sinh_1) < 1e-10, "sinh(1) test failed"
+    
+    # cosh(0) = 1
+    cosh_0 = TrigCalculator.cosh(0, 'radian')
+    print(f"cosh(0) = {cosh_0} (expected ~1.0)")
+    assert abs(cosh_0 - 1.0) < 1e-10, "cosh(0) test failed"
+    
+    # cosh(1)
+    cosh_1 = TrigCalculator.cosh(1.0, 'radian')
+    expected_cosh_1 = math.cosh(1.0)
+    print(f"cosh(1) = {cosh_1} (expected ~{expected_cosh_1})")
+    assert abs(cosh_1 - expected_cosh_1) < 1e-10, "cosh(1) test failed"
+    
+    # tanh(0) = 0
+    tanh_0 = TrigCalculator.tanh(0, 'radian')
+    print(f"tanh(0) = {tanh_0} (expected ~0.0)")
+    assert abs(tanh_0 - 0.0) < 1e-10, "tanh(0) test failed"
+    
+    # tanh(1)
+    tanh_1 = TrigCalculator.tanh(1.0, 'radian')
+    expected_tanh_1 = math.tanh(1.0)
+    print(f"tanh(1) = {tanh_1} (expected ~{expected_tanh_1})")
+    assert abs(tanh_1 - expected_tanh_1) < 1e-10, "tanh(1) test failed"
+    
+    # Test with degree unit: sinh(π radians) = sinh(180 degrees)
+    sinh_pi = TrigCalculator.sinh(pi, 'radian')
+    sinh_180 = TrigCalculator.sinh(180, 'degree')
+    print(f"sinh(π rad) = {sinh_pi}, sinh(180°) = {sinh_180} (should be equal)")
+    assert abs(sinh_pi - sinh_180) < 1e-10, "sinh degree/radian equivalence test failed"
+    
+    # cosh²(x) - sinh²(x) = 1 identity
+    x = 2.5
+    sinh_x = TrigCalculator.sinh(x)
+    cosh_x = TrigCalculator.cosh(x)
+    identity = cosh_x ** 2 - sinh_x ** 2
+    print(f"cosh²({x}) - sinh²({x}) = {identity} (expected ~1.0)")
+    assert abs(identity - 1.0) < 1e-10, "Hyperbolic identity test failed"
+    
     print()
 
 
@@ -137,4 +205,5 @@ if __name__ == '__main__':
     test_inverse_trig()
     test_roundtrip()
     test_invalid_inputs()
+    test_hyperbolic()
     print("✅ All tests passed!")
