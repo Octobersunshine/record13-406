@@ -74,8 +74,67 @@ def test_roundtrip():
     print()
 
 
+def test_invalid_inputs():
+    print("=== Testing Invalid Inputs ===")
+    
+    # Test inf
+    try:
+        TrigCalculator.sin(float('inf'))
+        assert False, "sin(inf) should raise ValueError"
+    except ValueError as e:
+        print(f"sin(inf) raises ValueError: {e}")
+    
+    try:
+        TrigCalculator.cos(float('-inf'))
+        assert False, "cos(-inf) should raise ValueError"
+    except ValueError as e:
+        print(f"cos(-inf) raises ValueError: {e}")
+    
+    # Test nan
+    try:
+        TrigCalculator.sin(float('nan'))
+        assert False, "sin(nan) should raise ValueError"
+    except ValueError as e:
+        print(f"sin(nan) raises ValueError: {e}")
+    
+    try:
+        TrigCalculator.tan(float('nan'), 'degree')
+        assert False, "tan(nan) should raise ValueError"
+    except ValueError as e:
+        print(f"tan(nan) raises ValueError: {e}")
+    
+    # Test inverse function domain violation
+    try:
+        TrigCalculator.asin(2.0)
+        assert False, "asin(2) should raise ValueError"
+    except ValueError as e:
+        print(f"asin(2) raises ValueError: {e}")
+    
+    try:
+        TrigCalculator.asin(-2.0, 'degree')
+        assert False, "asin(-2) should raise ValueError"
+    except ValueError as e:
+        print(f"asin(-2) raises ValueError: {e}")
+    
+    try:
+        TrigCalculator.acos(1.5)
+        assert False, "acos(1.5) should raise ValueError"
+    except ValueError as e:
+        print(f"acos(1.5) raises ValueError: {e}")
+    
+    # Test invalid input type
+    try:
+        TrigCalculator.sin("hello")
+        assert False, "sin('hello') should raise ValueError"
+    except ValueError as e:
+        print(f"sin('hello') raises ValueError: {e}")
+    
+    print()
+
+
 if __name__ == '__main__':
     test_basic_trig()
     test_inverse_trig()
     test_roundtrip()
+    test_invalid_inputs()
     print("✅ All tests passed!")

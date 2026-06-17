@@ -7,6 +7,15 @@ import sys
 
 class TrigCalculator:
     @staticmethod
+    def _validate_finite(value, name='value'):
+        if not isinstance(value, (int, float)):
+            raise ValueError(f'{name} must be a number')
+        if math.isinf(value):
+            raise ValueError(f'{name} must be a finite number, got infinity')
+        if math.isnan(value):
+            raise ValueError(f'{name} must be a valid number, got NaN')
+
+    @staticmethod
     def _to_radians(value, unit):
         if unit == 'degree':
             return math.radians(value)
@@ -20,31 +29,45 @@ class TrigCalculator:
 
     @staticmethod
     def sin(value, unit='radian'):
+        TrigCalculator._validate_finite(value, 'input')
         rad = TrigCalculator._to_radians(value, unit)
         return math.sin(rad)
 
     @staticmethod
     def cos(value, unit='radian'):
+        TrigCalculator._validate_finite(value, 'input')
         rad = TrigCalculator._to_radians(value, unit)
         return math.cos(rad)
 
     @staticmethod
     def tan(value, unit='radian'):
+        TrigCalculator._validate_finite(value, 'input')
         rad = TrigCalculator._to_radians(value, unit)
-        return math.tan(rad)
+        result = math.tan(rad)
+        if math.isinf(result):
+            display_value = f'{value}°' if unit == 'degree' else f'{value} rad'
+            raise ValueError(f'tan({display_value}) is undefined (result is infinity)')
+        return result
 
     @staticmethod
     def asin(value, unit='radian'):
+        TrigCalculator._validate_finite(value, 'input')
+        if value < -1 or value > 1:
+            raise ValueError(f'asin input must be in range [-1, 1], got {value}')
         result = math.asin(value)
         return TrigCalculator._from_radians(result, unit)
 
     @staticmethod
     def acos(value, unit='radian'):
+        TrigCalculator._validate_finite(value, 'input')
+        if value < -1 or value > 1:
+            raise ValueError(f'acos input must be in range [-1, 1], got {value}')
         result = math.acos(value)
         return TrigCalculator._from_radians(result, unit)
 
     @staticmethod
     def atan(value, unit='radian'):
+        TrigCalculator._validate_finite(value, 'input')
         result = math.atan(value)
         return TrigCalculator._from_radians(result, unit)
 
@@ -79,8 +102,14 @@ class TrigHTTPRequestHandler(BaseHTTPRequestHandler):
         try:
             calc_method = getattr(TrigCalculator, func)
             result = calc_method(value, unit)
+            if math.isnan(result):
+                self._send_error(400, 'Calculation error: result is NaN')
+                return
         except ValueError as e:
             self._send_error(400, f'Calculation error: {str(e)}')
+            return
+        except Exception as e:
+            self._send_error(500, f'Internal error: {str(e)}')
             return
 
         response = {
@@ -151,7 +180,9 @@ def run_cli():
             print('\nGoodbye!')
             break
         except ValueError as e:
-            print(f'Calculation error: {e}\n')
+            print(f'Error: {e}\n')
+        except Exception as e:
+            print(f'Unexpected error: {e}\n')
 
 
 def main():
